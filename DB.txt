@@ -1,0 +1,117 @@
+[hospital_admin]
+no int PK auto_increament
+ykiho varchar(80) foreign key(ykiho) references hospital(ykiho) on delete cascade
+admin_id varchar(20)
+admin_pw varchar(60)
+admin_name varchar(20)
+admin_email varchar(320)
+file varchar(2048)
+admin_created_time timestamp
+admin_modified_time timestamp
+
+
+[alarm]
+alarm_no int PK auto_increament
+hosp_ykiho varchar(80) foreign key(hosp_ykiho) references hospital_admin(ykiho) on delete cascade
+user_id varchar(320) foreign key(user_id) references users(id) on delete cascade // 유저 아이디로 받을건지?, 길이 20 -> 320
+alarm_text varchar(100)
+
+[hospital]
+ykiho varchar(80) PK
+hospital_name varchar(100)	// 길이 20맞나?
+hospital_intro varchar(200)
+hospital_announcement varchar(200)	
+hospital_max_slots int 	// 필요? -> 삭제
+reserves_slots int	// 필요? -> 삭제
+
+[users]
+no int PK auto_increament
+id varchar(320) // 255 -> 320
+password varchar(80)
+name varchar(20)
+birth int
+gender tinyint
+phone varchar(20)	// int -> varchar
+email varchar(320)
+token varchar(60) // ?
+is_valid tinyint // ?
+addr varchar(100)
+postcode varchar(6)
+addr_detail varchar(50)
+xpos double
+ypos double
+
+[children]
+id int PK auto_inc
+parent_no int foreign key(parent_no) references users(no) on delete cascade
+name varchar(20)
+birth int
+gender tinyint
+info varchar(400)	// 4000 -> 400
+
+[doctor]
+no int PK auto_inc
+ykiho varchar(80) foreign key(ykiho) references hospital(ykiho) on delete cascade
+doctor_name varchar(20)
+doctor_average_time_of_care int 	// 필요? -> 남김
+doctor_status tinyint		// 필요? -> 남김
+doctor_image_url varchar(1000)
+
+[shift]
+no int PK auto_inc
+doctor_no int foreign key(doctor_no) references doctor(no) on delete cascade
+week_day varchar(20)
+start_time time
+end_time time
+lunch_start_time
+lunch_end_time
+dinner_start_time
+dinner_end_time
+max int
+active tinyint
+
+[doctor_subject]
+no int PK auto_inc
+doctor_no int foreign key(doctor_no) references doctor(no) on delete cascade
+subject_no int foreign key(subject_no) references medical_subject(no) on delete cascade
+
+[medical_subject]
+no int PK auto_inc
+subject varchar(20)
+
+[time_slots_limit]
+no int PK auto_inc
+ykiho varchar(80) foreign key(ykiho) references hospital(ykiho) on delete cascade
+doctor_no int foreign key(doctor_no) references doctor(no) on delete cascade
+weekday varchar(20)
+date date
+time time
+count int
+max int
+block int 
+enable int
+
+[hospital_appointment]
+no varchar(15) PK
+created_time datetime
+modified_time datetime
+time_slot_no int foreign key(time_slot_no) references time_slots_limit(no) on delete cascade
+guardian int foreign key(guardian) references users(no) (//on delete cascade ? user --cascade-> children --cascade-> hosp_appo)
+patient_id int foreign key(patient_id) references chlidren(id) on delete cascade
+appo_status int
+symptom varchar(400)
+note varchar(400)	// 4000 -> 400
+
+
+// [appo_detail_view]
+
+
+// [appoDetailView]
+
+
+
+
+[like_hospital]
+no int PK auto_inc
+user_no int foreign key(user_no) references users(no) on delete cascade
+ykiho varchar(80) 	// 등록안된병원도 가능
